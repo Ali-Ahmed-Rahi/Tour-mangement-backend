@@ -3,9 +3,11 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes"
 import { UserServices } from "./user.service";
-import AppError from "../../errorHelpers/AppError";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sandResponse";
+import { verifyToken } from "../../utils/jwt";
+import { envVars } from "../../config/env";
+import { JwtPayload } from "jsonwebtoken";
 
 
 
@@ -21,15 +23,27 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 
 })
 
+
+const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId=req.params.id;
+  // const token=req.headers.authorization
+  // const verifiedToken=verifyToken(token as string,envVars.JWT_ACCESS_SECRET) as JwtPayload
+
+  const verifiedToken=req.user
+  const payload=req.body
+  const user = await UserServices.updateUser(userId,payload,verifiedToken)
+  sendResponse(res,{
+    success:true,
+    statusCode:httpStatus.CREATED,
+    massage:"User Updated Successfully",
+    data:user
+  })
+
+})
+
 const getAllUsers = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
   
     const result = await UserServices.getAllUsers()
-
-    // res.status(httpStatus.OK).json({
-    //   success:true,
-    //   message:"All Users Retrieved Successfully",
-    //   data:users
-    // })
 
     sendResponse(res,{
     success:true,
@@ -44,5 +58,6 @@ const getAllUsers = catchAsync(async(req: Request, res: Response, next: NextFunc
 
 export const UserControllers = {
   createUser,
-  getAllUsers
+  getAllUsers,
+  updateUser
 }
