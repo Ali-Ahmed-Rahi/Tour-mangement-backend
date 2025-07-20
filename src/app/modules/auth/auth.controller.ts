@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
@@ -9,21 +10,62 @@ import { setAuthCookie } from "../../utils/setcookies"
 import { createUserTokens } from "../../utils/usertoken"
 import { envVars } from "../../config/env"
 import { JwtPayload } from "jsonwebtoken"
+import passport from "passport"
 
 const credentialsLogin=catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const loginInfo=await AuthServices.credentialsLogin(req.body)
-  
-  setAuthCookie(res,loginInfo)
+      // const loginInfo = await AuthServices.credentialsLogin(req.body)
+
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+
+        if (err) { 
+            return next(new AppError(401, err))
+        }
+
+        if (!user) {
+            // console.log("from !user");
+            // return new AppError(401, info.message)
+            return next(new AppError(401, info.message))
+        }
+
+        const userTokens = await createUserTokens(user)
+
+        // delete user.toObject().password
+
+        const { password: pass, ...rest } = user.toObject()
 
 
-  sendResponse(res,{
-    success:true,
-    statusCode:httpStatus.OK,
-    massage:"User Logged in Created Successfully",
-    data:loginInfo
-  })
+        setAuthCookie(res, userTokens)
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            massage: "User Logged In Successfully",
+            data: {
+                accessToken: userTokens.accessToken,
+                refreshToken: userTokens.refreshToken,
+                user: rest
+
+            },
+        })
+    })(req, res, next)
+
+    // res.cookie("accessToken", loginInfo.accessToken, {
+    //     httpOnly: true,
+    //     secure: false
+    // })
+
+
+    // res.cookie("refreshToken", loginInfo.refreshToken, {
+    //     httpOnly: true,
+    //     secure: false,
+    // })
+
 
 })
+
+
+
+
 
 // get new access token
 const getNewAccessToken=catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -112,8 +154,6 @@ const googleCallbackController=catchAsync(async (req: Request, res: Response, ne
 
  res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
 })
-
-
 
 
 
