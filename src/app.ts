@@ -8,6 +8,7 @@ import { notFound } from './app/middlewares/notFound';
 import passport from 'passport';
 import "./app/config/passport";
 import expressSession from"express-session"
+import { envVars } from './app/config/env';
 const app = express()
 
 app.use(expressSession(
@@ -21,7 +22,12 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(cookieParser())
 app.use(express.json())
-app.use(cors())
+app.set("trust proxy",1)
+app.use(express.urlencoded({extended:true}))
+app.use(cors({
+  origin:envVars.FRONTEND_URL,
+  credentials:true
+}))
 
 
 app.use("/api/v1", router)

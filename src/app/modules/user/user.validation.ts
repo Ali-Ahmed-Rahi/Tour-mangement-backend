@@ -64,15 +64,7 @@ export const updateUserZodSchema = z.object({
       .min(2, { message: "Name Too Short. Minimum 2 character long" })
       .max(50, { message: "Name Too Long" }).optional(),
 
-    password: z
-    .string({invalid_type_error: "Password must be String"})
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
-      {
-        message:
-          "Password must be at least 6 characters and include uppercase, lowercase, number, and special character",
-      }
-    ).optional(),
+   
 
     phone: z
     .string({invalid_type_error: "Phone Number must be String"})

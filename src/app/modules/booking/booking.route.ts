@@ -1,6 +1,6 @@
 import express from "express";
 
-import { checkAuth } from "../../middlewares/check.Auth";
+import { checkAuth } from "../../middlewares/checkAuth";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { Role } from "../user/user.interface";
 import { BookingController } from "./booking.controller";

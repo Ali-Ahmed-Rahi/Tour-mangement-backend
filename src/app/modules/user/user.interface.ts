@@ -15,7 +15,8 @@ export interface IUser {
   role: Role;
   auths: IAuthProvider[];
   bookings?: Types.ObjectId[];
-  guides?:Types.ObjectId[]
+  guides?:Types.ObjectId[];
+  createdAt?: Date
   }
 
 export enum IsActive {
@@ -30,6 +31,12 @@ export enum Role {
   ADMIN = "ADMIN",
   USER = "USER",
   GUIDE = "GUIDE"
+}
+
+
+export interface IAuthProvider {
+    provider: "google" | "credentials"; 
+    providerId: string;
 }
 
 
