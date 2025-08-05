@@ -3,6 +3,7 @@ import { envVars } from "../../config/env";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sandResponse";
 import { PaymentService } from "./payment.service";
+import { SSLService } from "../sslCommerz/sslCommerz.service";
 
 const initPayment = catchAsync(async (req: Request, res: Response) => {
     const bookingId = req.params.bookingId;
@@ -41,9 +42,42 @@ const cancelPayment = catchAsync(async (req: Request, res: Response) => {
     }
 });
 
+
+const getInvoiceDownloadUrl = catchAsync(
+    async (req: Request, res: Response) => {
+        const { paymentId } = req.params;
+        const result = await PaymentService.getInvoiceDownloadUrl(paymentId);
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            massage: "Invoice download URL retrieved successfully",
+            data: result,
+        });
+    }
+);
+
+
+
+const validatePayment = catchAsync(
+    async (req: Request, res: Response) => {
+        console.log("sslcommerz ipn url body", req.body);
+        await SSLService.validatePayment(req.body)
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            massage: "Payment Validated Successfully",
+            data: null,
+        });
+    }
+);
+
+
+
 export const PaymentController = {
     initPayment,
     successPayment,
     failPayment,
     cancelPayment,
+    validatePayment,
+    getInvoiceDownloadUrl 
 };

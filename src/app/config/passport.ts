@@ -5,8 +5,7 @@ import { User } from "../modules/user/user.model";
 import { IsActive, Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcryptjs from "bcryptjs";
-import AppError from "../errorHelpers/AppError";
-import httpStatus from "http-status-codes"
+
 
 
 passport.use(

@@ -48,6 +48,7 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
 
 
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log("JWT ERROR")
     next(error)
   }

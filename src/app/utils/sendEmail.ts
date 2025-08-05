@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ejs from "ejs";
 import nodemailer from "nodemailer";
